@@ -9,3 +9,5 @@ Site do corretor Dênis Bastos (CRECI-AL 7509), Maceió · AL.
 - **Banco:** estrutura em `supabase/schema.sql`.
 
 Para publicar uma mudança: faça o commit na branch `main` e a Vercel publica sozinha.
+
+-
