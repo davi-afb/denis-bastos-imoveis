@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://denis-bastos-imoveis.vercel.app/sitemap.xml
