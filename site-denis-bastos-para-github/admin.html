@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel · Dênis Bastos Imóveis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --ink:#12100d; --ink-2:#1b1712; --ink-3:#221c15; --line:#3a3327;
+  --ivory:#f3eee3; --taupe:#a79c87; --taupe-dim:#7a715f;
+  --gold:#c6a664; --gold-bright:#e4c578;
+  --success:#8fae82; --danger:#c96a56; --danger-bg:#2a1d18;
+  --fd:'Fraunces',Georgia,serif; --fb:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--ivory);font-family:var(--fb);min-height:100%}
+body{padding:24px 16px 60px}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3{font-family:var(--fd);font-weight:600;margin:0}
+a{color:var(--gold)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.top h1{font-size:22px}
+.top .sub{font-size:12.5px;color:var(--taupe);margin-top:2px}
+button{font-family:var(--fb);cursor:pointer;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--ivory);padding:9px 14px;font-size:13.5px;transition:border-color .2s,background .2s}
+button:hover{border-color:var(--gold)}
+button.primary{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:600}
+button.primary:hover{background:var(--gold-bright);border-color:var(--gold-bright)}
+button.danger{color:var(--danger);border-color:var(--danger)}
+button.danger:hover{background:var(--danger-bg)}
+button:disabled{opacity:.5;cursor:default}
+input,textarea,select{
+  width:100%;background:var(--ink-2);border:1px solid var(--line);border-radius:9px;color:var(--ivory);
+  padding:10px 12px;font-family:var(--fb);font-size:14px;
+}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+label{display:block;font-size:12px;color:var(--taupe);margin:0 0 5px;letter-spacing:.02em}
+.field{margin-bottom:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr 1fr}}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:20px}
+.msg{font-size:13px;padding:10px 14px;border-radius:9px;margin-bottom:16px}
+.msg.err{background:var(--danger-bg);color:#e8b6a6;border:1px solid var(--danger)}
+.msg.ok{background:#1d281c;color:var(--success);border:1px solid var(--success)}
+#loginScreen{max-width:360px;margin:14vh auto 0}
+#loginScreen .card{padding:28px 24px}
+#loginScreen h1{font-size:20px;margin-bottom:4px}
+#loginScreen p{font-size:13px;color:var(--taupe);margin:0 0 20px}
+.checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ivory)}
+.checkline input{width:auto}
+.list-item{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:none}
+.list-item img{width:56px;height:56px;object-fit:cover;border-radius:8px;background:var(--ink-3);flex:none}
+.list-item .info{flex:1;min-width:0}
+.list-item .info .t{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-item .info .m{font-size:12px;color:var(--taupe)}
+.list-item .badge{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:99px;background:var(--ink-3);color:var(--taupe);margin-left:6px}
+.list-item .badge.off{color:var(--danger)}
+.list-item .actions{display:flex;gap:6px;flex:none}
+.list-item .actions button{padding:7px 10px;font-size:12.5px}
+.section{margin-bottom:32px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-head h2{font-size:17px}
+.photos{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.photo{position:relative;width:76px;height:76px;border-radius:8px;overflow:hidden;background:var(--ink-3)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo button{position:absolute;top:3px;right:3px;padding:2px 6px;font-size:11px;background:rgba(18,16,13,.85);border:none}
+.hint{font-size:11.5px;color:var(--taupe-dim);margin-top:6px}
+#formCard{display:none}
+.formhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.divider{border:none;border-top:1px solid var(--line);margin:18px 0}
+[hidden]{display:none!important}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="card">
+    <h1>Painel administrativo</h1>
+    <p>Dênis Bastos Imóveis · acesso restrito</p>
+    <div id="loginMsg"></div>
+    <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username"></div>
+    <div class="field"><label for="pass">Senha</label><input id="pass" type="password" autocomplete="current-password"></div>
+    <button class="primary" id="btnLogin" style="width:100%">Entrar</button>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <div class="top">
+    <div>
+      <h1>Painel administrativo</h1>
+      <div class="sub">Dênis Bastos Imóveis</div>
+    </div>
+    <button id="btnLogout">Sair</button>
+  </div>
+
+  <div id="topMsg"></div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Imóveis</h2>
+      <button class="primary" id="btnNew">+ Novo imóvel</button>
+    </div>
+    <div class="card" id="listCard"><div id="list"></div></div>
+  </div>
+
+  <div class="section" id="formCard">
+    <div class="card">
+      <div class="formhead">
+        <h2 id="formTitle">Novo imóvel</h2>
+        <button id="btnCancelForm">Cancelar</button>
+      </div>
+      <div id="formMsg"></div>
+
+      <div class="field"><label for="f_titulo">Título</label><input id="f_titulo" placeholder="Ex.: Apartamento 3 quartos na Ponta Verde"></div>
+
+      <div class="row2">
+        <div class="field"><label for="f_tipo">Tipo</label>
+          <select id="f_tipo"><option value="apartamento">Apartamento</option><option value="casa">Casa</option><option value="outro">Outro</option></select>
+        </div>
+        <div class="field"><label for="f_bairro">Bairro</label><input id="f_bairro" placeholder="Ex.: Ponta Verde"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="f_edificio">Edifício (opcional)</label><input id="f_edificio"></div>
+        <div class="field"><label for="f_cidade">Cidade (opcional, padrão Maceió)</label><input id="f_cidade" placeholder="Maceió"></div>
+      </div>
+
+      <div class="row3">
+        <div class="field"><label for="f_preco">Preço (R$, vazio = sob consulta)</label><input id="f_preco" type="number" step="1000" placeholder="490000"></div>
+        <div class="field"><label for="f_condominio">Condomínio (R$/mês)</label><input id="f_condominio" type="number" step="10"></div>
+        <div class="field"><label for="f_iptu">IPTU (R$/ano)</label><input id="f_iptu" type="number" step="10"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label for="f_quartos">Quartos</label><input id="f_quartos" type="number" step="1"></div>
+        <div class="field"><label for="f_banheiros">Banheiros</label><input id="f_banheiros" type="number" step="1"></div>
+        <div class="field"><label for="f_vagas">Vagas (vazio = sob consulta)</label><input id="f_vagas" type="number" step="1"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="f_area">Área (m²)</label><input id="f_area" type="number" step="1"></div>
+        <div class="field"><label for="f_ordem">Ordem de exibição</label><input id="f_ordem" type="number" step="1"></div>
+      </div>
+
+      <div class="field" style="display:flex;gap:22px;flex-wrap:wrap;padding:4px 0">
+        <label class="checkline"><input type="checkbox" id="f_mobiliado"> Mobiliado</label>
+        <label class="checkline"><input type="checkbox" id="f_destaque"> Em destaque</label>
+        <label class="checkline"><input type="checkbox" id="f_publicado" checked> Publicado (visível no site)</label>
+      </div>
+
+      <div class="field"><label for="f_descricao">Descrição</label><textarea id="f_descricao" rows="5" placeholder="Escreva do seu jeito — depois dá pra pedir pro Claude deixar no tom do site."></textarea></div>
+      <div class="field"><label for="f_destaques">Destaques (um por linha)</label><textarea id="f_destaques" rows="3" placeholder="Vista mar&#10;Piscina&#10;Área gourmet"></textarea></div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <label>Fotos</label>
+        <div class="photos" id="existingPhotos"></div>
+        <input type="file" id="f_fotos" accept="image/*" multiple>
+        <div class="photos" id="newPhotosPreview"></div>
+        <div class="hint">A ordem de envio é a ordem que aparece na galeria do site. Vídeo-tour não é gerado automaticamente aqui — se quiser um, é só pedir depois.</div>
+      </div>
+
+      <hr class="divider">
+      <button class="primary" id="btnSave" style="width:100%">Salvar imóvel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://waakhggazfajbghmtslm.supabase.co';
+const SB_KEY = 'sb_publishable_Fh7qtD-YXThZoFr0_2modA_d90VcOYF';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+const BUCKET = 'site';
+
+const $ = (s) => document.querySelector(s);
+let session = null, imoveis = [], editingId = null, newFiles = [], removedPhotoIds = [];
+
+function msg(el, text, type){
+  el.innerHTML = text ? '<div class="msg '+(type||'err')+'">'+text+'</div>' : '';
+}
+function slugify(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
+}
+function money(v){ return v==null ? 'sob consulta' : 'R$ '+Number(v).toLocaleString('pt-BR'); }
+
+async function checkSession(){
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  if(session){ showApp(); loadList(); } else { showLogin(); }
+}
+function showLogin(){ $('#loginScreen').hidden=false; $('#app').hidden=true; }
+function showApp(){ $('#loginScreen').hidden=true; $('#app').hidden=false; }
+
+$('#btnLogin').onclick = async () => {
+  msg($('#loginMsg'),'');
+  const email = $('#email').value.trim(), pass = $('#pass').value;
+  if(!email || !pass){ msg($('#loginMsg'),'Preencha e-mail e senha.'); return; }
+  $('#btnLogin').disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  $('#btnLogin').disabled = false;
+  if(error){ msg($('#loginMsg'),'Não consegui entrar: e-mail ou senha incorretos.'); return; }
+  await checkSession();
+};
+$('#btnLogout').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+async function loadList(){
+  msg($('#topMsg'),'');
+  const { data, error } = await sb.from('imoveis').select('*, imovel_fotos(id,url,ordem)').order('ordem',{ascending:true});
+  if(error){ msg($('#topMsg'),'Erro ao carregar imóveis: '+error.message); return; }
+  imoveis = data || [];
+  renderList();
+}
+function renderList(){
+  const box = $('#list');
+  if(!imoveis.length){ box.innerHTML = '<p style="color:var(--taupe);font-size:13.5px">Nenhum imóvel cadastrado ainda.</p>'; return; }
+  box.innerHTML = imoveis.map(function(im){
+    const fotos = (im.imovel_fotos||[]).slice().sort(function(a,b){return (a.ordem||0)-(b.ordem||0)});
+    const thumb = fotos[0] ? fotos[0].url : '';
+    return '<div class="list-item">'+
+      (thumb ? '<img src="'+thumb+'" loading="lazy">' : '<div class="list-item img" style="width:56px;height:56px;border-radius:8px;background:var(--ink-3)"></div>')+
+      '<div class="info"><div class="t">'+esc(im.titulo)+
+        (im.destaque?'<span class="badge">Destaque</span>':'')+
+        (!im.publicado?'<span class="badge off">Rascunho</span>':'')+
+      '</div><div class="m">'+esc(im.bairro||'')+' · '+money(im.preco)+' · '+fotos.length+' fotos</div></div>'+
+      '<div class="actions">'+
+        '<button data-edit="'+im.id+'">Editar</button>'+
+        '<button class="danger" data-del="'+im.id+'">Excluir</button>'+
+      '</div></div>';
+  }).join('');
+  [].forEach.call(box.querySelectorAll('[data-edit]'), function(b){ b.onclick=function(){ openForm(Number(b.dataset.edit)); }; });
+  [].forEach.call(box.querySelectorAll('[data-del]'), function(b){ b.onclick=function(){ deleteImovel(Number(b.dataset.del)); }; });
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+$('#btnNew').onclick = () => openForm(null);
+$('#btnCancelForm').onclick = () => closeForm();
+
+function openForm(id){
+  editingId = id; newFiles = []; removedPhotoIds = [];
+  msg($('#formMsg'),'');
+  $('#newPhotosPreview').innerHTML=''; $('#f_fotos').value='';
+  const im = id ? imoveis.find(function(x){return x.id===id}) : null;
+  $('#formTitle').textContent = im ? 'Editar imóvel' : 'Novo imóvel';
+  $('#f_titulo').value = im ? im.titulo||'' : '';
+  $('#f_tipo').value = im ? (im.tipo||'apartamento') : 'apartamento';
+  $('#f_bairro').value = im ? im.bairro||'' : '';
+  $('#f_edificio').value = im ? im.edificio||'' : '';
+  $('#f_cidade').value = im ? im.cidade||'' : '';
+  $('#f_preco').value = im && im.preco!=null ? im.preco : '';
+  $('#f_condominio').value = im && im.condominio!=null ? im.condominio : '';
+  $('#f_iptu').value = im && im.iptu!=null ? im.iptu : '';
+  $('#f_quartos').value = im && im.quartos!=null ? im.quartos : '';
+  $('#f_banheiros').value = im && im.banheiros!=null ? im.banheiros : '';
+  $('#f_vagas').value = im && im.vagas!=null ? im.vagas : '';
+  $('#f_area').value = im && im.area_m2!=null ? im.area_m2 : '';
+  $('#f_ordem').value = im ? im.ordem : (imoveis.length ? Math.max.apply(null,imoveis.map(function(x){return x.ordem||0}))+1 : 1);
+  $('#f_mobiliado').checked = !!(im && im.mobiliado);
+  $('#f_destaque').checked = !!(im && im.destaque);
+  $('#f_publicado').checked = im ? !!im.publicado : true;
+  $('#f_descricao').value = im ? im.descricao||'' : '';
+  $('#f_destaques').value = im && im.destaques ? im.destaques.join('\n') : '';
+  renderExistingPhotos(im);
+  $('#formCard').style.display='block';
+  $('#formCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeForm(){ $('#formCard').style.display='none'; editingId=null; }
+
+function renderExistingPhotos(im){
+  const box = $('#existingPhotos');
+  const fotos = im ? (im.imovel_fotos||[]).slice().sort(function(a,b){return (a.ordem||0)-(b.ordem||0)}) : [];
+  box.innerHTML = fotos.map(function(f){
+    return '<div class="photo" data-pid="'+f.id+'"><img src="'+f.url+'"><button data-rm="'+f.id+'">✕</button></div>';
+  }).join('');
+  [].forEach.call(box.querySelectorAll('[data-rm]'), function(b){
+    b.onclick = function(){
+      const pid = Number(b.dataset.rm);
+      removedPhotoIds.push(pid);
+      b.closest('.photo').remove();
+    };
+  });
+}
+
+$('#f_fotos').onchange = (e) => {
+  newFiles = newFiles.concat(Array.prototype.slice.call(e.target.files));
+  renderNewPhotosPreview();
+};
+function renderNewPhotosPreview(){
+  const box = $('#newPhotosPreview');
+  box.innerHTML = newFiles.map(function(f,i){
+    return '<div class="photo"><img src="'+URL.createObjectURL(f)+'"><button data-rmnew="'+i+'">✕</button></div>';
+  }).join('');
+  [].forEach.call(box.querySelectorAll('[data-rmnew]'), function(b){
+    b.onclick=function(){ newFiles.splice(Number(b.dataset.rmnew),1); renderNewPhotosPreview(); };
+  });
+}
+
+async function deleteImovel(id){
+  if(!confirm('Excluir este imóvel? Essa ação não pode ser desfeita.')) return;
+  msg($('#topMsg'),'');
+  const im = imoveis.find(function(x){return x.id===id});
+  const paths = (im.imovel_fotos||[]).map(function(f){ return urlToPath(f.url); }).filter(Boolean);
+  if(paths.length) await sb.storage.from(BUCKET).remove(paths);
+  const { error } = await sb.from('imoveis').delete().eq('id', id);
+  if(error){ msg($('#topMsg'),'Erro ao excluir: '+error.message); return; }
+  msg($('#topMsg'),'Imóvel excluído.','ok');
+  await loadList();
+}
+function urlToPath(url){
+  const marker = '/storage/v1/object/public/'+BUCKET+'/';
+  const i = url.indexOf(marker);
+  return i===-1 ? null : url.slice(i+marker.length);
+}
+
+$('#btnSave').onclick = async () => {
+  msg($('#formMsg'),'');
+  const titulo = $('#f_titulo').value.trim();
+  const bairro = $('#f_bairro').value.trim();
+  if(!titulo || !bairro){ msg($('#formMsg'),'Preencha pelo menos título e bairro.'); return; }
+
+  $('#btnSave').disabled = true;
+  $('#btnSave').innerHTML = '<span class="spin"></span>Salvando…';
+  try{
+    const payload = {
+      titulo: titulo,
+      tipo: $('#f_tipo').value,
+      bairro: bairro,
+      edificio: $('#f_edificio').value.trim() || null,
+      cidade: $('#f_cidade').value.trim() || null,
+      preco: $('#f_preco').value === '' ? null : Number($('#f_preco').value),
+      condominio: $('#f_condominio').value === '' ? null : Number($('#f_condominio').value),
+      iptu: $('#f_iptu').value === '' ? null : Number($('#f_iptu').value),
+      quartos: $('#f_quartos').value === '' ? null : Number($('#f_quartos').value),
+      banheiros: $('#f_banheiros').value === '' ? null : Number($('#f_banheiros').value),
+      vagas: $('#f_vagas').value === '' ? null : Number($('#f_vagas').value),
+      area_m2: $('#f_area').value === '' ? null : Number($('#f_area').value),
+      ordem: $('#f_ordem').value === '' ? 0 : Number($('#f_ordem').value),
+      mobiliado: $('#f_mobiliado').checked,
+      destaque: $('#f_destaque').checked,
+      publicado: $('#f_publicado').checked,
+      descricao: $('#f_descricao').value.trim() || null,
+      destaques: $('#f_destaques').value.split('\n').map(function(s){return s.trim()}).filter(Boolean)
+    };
+
+    let imovelId = editingId;
+    if(imovelId){
+      const { error } = await sb.from('imoveis').update(payload).eq('id', imovelId);
+      if(error) throw error;
+    } else {
+      payload.slug = slugify(titulo + '-' + bairro) + '-' + Date.now().toString(36).slice(-4);
+      const { data, error } = await sb.from('imoveis').insert(payload).select('id').single();
+      if(error) throw error;
+      imovelId = data.id;
+    }
+
+    if(removedPhotoIds.length){
+      const toRemove = imoveis.find(function(x){return x.id===editingId});
+      const paths = (toRemove ? toRemove.imovel_fotos : []).filter(function(f){return removedPhotoIds.indexOf(f.id)>-1}).map(function(f){return urlToPath(f.url)}).filter(Boolean);
+      if(paths.length) await sb.storage.from(BUCKET).remove(paths);
+      await sb.from('imovel_fotos').delete().in('id', removedPhotoIds);
+    }
+
+    if(newFiles.length){
+      const existing = editingId ? (imoveis.find(function(x){return x.id===editingId}).imovel_fotos||[]).filter(function(f){return removedPhotoIds.indexOf(f.id)===-1}) : [];
+      let ord = existing.length ? Math.max.apply(null, existing.map(function(f){return f.ordem||0}))+1 : 0;
+      const currentSlug = payload.slug || (imoveis.find(function(x){return x.id===editingId})||{}).slug || slugify(titulo);
+      for(const file of newFiles){
+        const path = 'imoveis/'+currentSlug+'/'+Date.now()+'-'+ord+'-'+slugify(file.name.replace(/\.[a-zA-Z0-9]+$/,''))+(file.name.match(/\.[a-zA-Z0-9]+$/)||[''])[0];
+        const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert:false });
+        if(upErr) throw upErr;
+        const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(path);
+        const { error: insErr } = await sb.from('imovel_fotos').insert({ imovel_id: imovelId, url: pub.publicUrl, ordem: ord });
+        if(insErr) throw insErr;
+        ord++;
+      }
+    }
+
+    msg($('#formMsg'),'Imóvel salvo com sucesso.','ok');
+    await loadList();
+    setTimeout(closeForm, 700);
+  }catch(err){
+    msg($('#formMsg'),'Erro ao salvar: '+(err.message||err));
+  }finally{
+    $('#btnSave').disabled = false;
+    $('#btnSave').textContent = 'Salvar imóvel';
+  }
+};
+
+checkSession();
+</script>
+</body>
+</html>
